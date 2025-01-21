@@ -1,0 +1,1 @@
+from .Getter import NewsAPIGetter

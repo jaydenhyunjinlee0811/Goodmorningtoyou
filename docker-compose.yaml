@@ -1,0 +1,19 @@
+services:
+  minio:
+    container_name: minio_container
+    image: minio/minio
+    hostname: localhost
+    ports:
+      - "9010:9010"
+      - "9011:9011"
+    command: server /data --address ":9010" --console-address ":9011"
+    volumes:
+      - goodmoringtoyou_minio_volume:/data
+    environment:
+      MINIO_ROOT_USER: jlee_minio
+      MINIO_ROOT_PASSWORD: jlee_minio
+    restart: unless-stopped
+
+volumes:
+  goodmoringtoyou_minio_volume: # This volume MUST exist prior to creating containers
+    external: true
