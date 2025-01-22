@@ -1,1 +1,1 @@
-from .Getter import NewsAPIGetter
+from .Getter import NewsAPIGetter, OnthisdayAPIGetter

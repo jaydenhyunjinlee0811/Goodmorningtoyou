@@ -6,24 +6,25 @@ import botocore
 import datetime
 
 from .GetterInterface import GetterInterface
-from ..utils import get_logger
 
 class NewsAPIGetter(GetterInterface):
     def __init__(
         self, 
         source_endpoint: str, 
-        source_key: str,
         bucket_name: str,
-        bucket_key: str
+        bucket_key: str,
+        source_key: str
     ):
         super().__init__(
-            source_endpoint, 
-            source_key,
-            bucket_name,
-            bucket_key
+            source_endpoint=source_endpoint, 
+            source_key=source_key,
+            bucket_name=bucket_name,
+            bucket_key=bucket_key
         )
 
     def get(self):
+        self.logger.info('Requesting..')
+
         try:
             res = requests.get(f'{self.source_endpoint}&apiKey={self.source_key}').json()
         except Exception as e:

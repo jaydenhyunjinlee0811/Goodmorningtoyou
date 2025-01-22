@@ -3,13 +3,14 @@ import logging
 import sys
 
 def get_logger(logger_fp: str):
-    logger = logging.get_logger(__name__)
+    logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
     if logger.hasHandlers():
         logger.handlers.clear()
 
     formatter = logging.Formatter(
-        '%(asctime)s|%(name)s|%(levelname)s| >> %(message)s'
+        '%(asctime)s|%(name)s|%(levelname)s| >> %(message)s',
+        datefmt='%Y/%m/%d %I:%M%p'
     )
     stream_handler = logging.StreamHandler(sys.stdout)
 
