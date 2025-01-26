@@ -13,13 +13,19 @@ class NewsAPIGetter(GetterInterface):
         source_endpoint: str, 
         bucket_name: str,
         bucket_key: str,
-        source_key: str
+        source_key: str,
+        access_key_id: str,
+        access_key_pwd: str,
+        logger_fp: str=None
     ):
         super().__init__(
             source_endpoint=source_endpoint, 
             source_key=source_key,
             bucket_name=bucket_name,
-            bucket_key=bucket_key
+            bucket_key=bucket_key,
+            access_key_id=access_key_id,
+            access_key_pwd=access_key_pwd,
+            logger_fp=logger_fp
         )
 
     def get(self):
@@ -51,8 +57,8 @@ class NewsAPIGetter(GetterInterface):
         client = boto3.client(
             's3',
             endpoint_url='http://localhost:9010',
-            aws_access_key_id='jlee_minio',
-            aws_secret_access_key='jlee_minio'
+            aws_access_key_id=self.access_key_id,
+            aws_secret_access_key=self.access_key_pwd
         )
 
         try:

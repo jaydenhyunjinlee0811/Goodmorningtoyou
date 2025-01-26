@@ -15,7 +15,7 @@ def get_logger(logger_fp: str):
     stream_handler = logging.StreamHandler(sys.stdout)
 
     if logger_fp:
-        ...
+        pass
 
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)

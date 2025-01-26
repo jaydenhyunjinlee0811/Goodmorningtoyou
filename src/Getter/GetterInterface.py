@@ -9,6 +9,8 @@ class GetterInterface(ABC):
         source_endpoint: str,
         bucket_name: str,
         bucket_key: str,
+        access_key_id: str,
+        access_key_pwd: str,
         source_key: str = None,
         logger_fp: str = None
     ):
@@ -16,6 +18,8 @@ class GetterInterface(ABC):
         self.source_key = source_key
         self.bucket_name = bucket_name
         self.bucket_key = bucket_key
+        self.access_key_id = access_key_id  
+        self.access_key_pwd = access_key_pwd
         self.logger = get_logger(logger_fp)
 
         self.data: List[Dict[str, str]] = list()

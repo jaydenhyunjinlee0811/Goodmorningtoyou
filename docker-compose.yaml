@@ -10,10 +10,57 @@ services:
     volumes:
       - goodmoringtoyou_minio_volume:/data
     environment:
-      MINIO_ROOT_USER: jlee_minio
-      MINIO_ROOT_PASSWORD: jlee_minio
+      MINIO_ROOT_USER: ...
+      MINIO_ROOT_PASSWORD: ...
+    networks:
+      - goodmoringtoyou_network
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    hostname: localhost
+    ports:
+      - "5432:5432"
+    networks:
+      - goodmoringtoyou_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+    volumes:
+      - goodmorningtoyou_postgres_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: news_onthisday
+      POSTGRES_USER: ...
+      POSTGRES_PASSWORD: ...
+    restart: unless-stopped
+  
+  # In order to establish connection to news_onthisday
+  # you need to configure the hostname as host.docker.internal
+  # or get the actual interal IP using `docker inspect postgres_container -f "{{json .NetworkSettings.Networks }}"`
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    hostname: localhost
+    ports:
+      - "5050:80"
+    volumes:
+      - goodmorningtoyou_postgres_volume:/var/lib/pgadmin
+    user: "${UID}:${GID}"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ...
+      PGADMIN_DEFAULT_PASSWORD: ...
     restart: unless-stopped
 
 volumes:
-  goodmoringtoyou_minio_volume: # This volume MUST exist prior to creating containers
+  goodmoringtoyou_minio_volume:
+    external: true # This volume MUST exist prior to creating containers
+  goodmorningtoyou_postgres_volume:
     external: true
+
+networks:
+  goodmoringtoyou_network:
+    driver: bridge
