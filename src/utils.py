@@ -9,7 +9,7 @@ def get_logger(logger_fp: str):
         logger.handlers.clear()
 
     formatter = logging.Formatter(
-        '%(asctime)s|%(name)s|%(levelname)s| >> %(message)s',
+        '%(asctime)s|%(levelname)s| >> %(message)s',
         datefmt='%Y/%m/%d %I:%M%p'
     )
     stream_handler = logging.StreamHandler(sys.stdout)
