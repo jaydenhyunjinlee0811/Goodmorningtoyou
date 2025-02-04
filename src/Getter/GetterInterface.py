@@ -7,11 +7,11 @@ class GetterInterface(ABC):
     def __init__(
         self,
         source_endpoint: str,
+        source_key: str,
         bucket_name: str,
         bucket_key: str,
         access_key_id: str,
         access_key_pwd: str,
-        source_key: str = None,
         logger_fp: str = None
     ):
         self.source_endpoint = source_endpoint
@@ -24,8 +24,12 @@ class GetterInterface(ABC):
 
         self.data: List[Dict[str, str]] = list()
 
-    @abstractmethod
     def get(self):
+        self.request()
+        self.stage()
+
+    @abstractmethod
+    def request(self):
         pass
 
     @abstractmethod

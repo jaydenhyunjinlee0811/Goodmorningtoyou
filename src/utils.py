@@ -2,7 +2,7 @@ import boto3
 import logging 
 import sys
 
-def get_logger(logger_fp: str):
+def get_logger(logger_fp: str=None):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
     if logger.hasHandlers():
@@ -15,7 +15,11 @@ def get_logger(logger_fp: str):
     stream_handler = logging.StreamHandler(sys.stdout)
 
     if logger_fp:
-        pass
+        fileHandler = logging.FileHandler(
+            filename=logger_fp
+        )
+        fileHandler.setFormatter(formatter)
+        logger.addHandler(fileHandler)
 
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)

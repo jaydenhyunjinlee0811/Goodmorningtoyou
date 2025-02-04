@@ -1,11 +1,10 @@
 import datetime
 import re
 import boto3
-import os 
 import json
 import sys
 import psycopg2 as pg
-from typing import List, Dict, Union
+from typing import List, Dict
 
 from ..utils import get_logger 
 
@@ -40,6 +39,11 @@ class Parser(object):
             'news': list(),
             'onthisday': list()
         }
+
+    def parse(self):
+        self.extract()
+        self.transform()
+        self.ingest()
 
     def extract(self):
         self.logger.info('Extracting staged data from Minio buckets..')
@@ -79,7 +83,7 @@ class Parser(object):
         
         self.logger.info('Extraction result from Bucket(%s/%s): [%s] files', self.bucket_name, f'{prefix}/{dt_key}', len(self.data))
 
-    def parse(self):
+    def transform(self):
         url_patt = re.compile(r'https://www\.(\w+)\.com')
         for key in self.bucket_keys:
             contents = self.data[key]
@@ -135,29 +139,27 @@ class Parser(object):
                 for key, lst in self.data.items():
                     if key == 'news':
                         insert = f'INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, publisheddate) VALUES '
-                        # tmp_lst = list()
-                        # for d in lst:
-                        #     tmp_lst.append(str((d['publisher'], d['title'], d['description'], d['publishedDate'])))
-
                         vals = ', '.join([str((d['publisher'], d['title'], d['description'], str(d['publishedDate']))) for d in lst])
-                        # vals = ', '.join(tmp_lst)
-                        # vals = ', '.join(
-                        #     cursor.mogrify(
-                        #         '(%s, %s, %s, %s)', tuple([d['publisher'], d['title'], d['description'], d['publishedDate']])
-                        #     ).decode('utf-8') for d in lst
-                        # )
                     else:
-                        sys.exit(0)
-                        insert = ...
+                        insert = f'INSERT INTO {self.tbl_schema}.{key} (year, event) VALUES '
+                        vals = ', '.join([str((d['year'], d['event'])) for d in lst])
 
-                    print(insert + vals)
                     cursor.execute(insert + vals)
-                    self.logger.info('[%s] data successfully ingested!', key)
-                
+                    num_added = len(lst)
+
+                    cursor.execute(f'SELECT COUNT(0) FROM {self.tbl_schema}.{key};')
+                    num_total = cursor.fetchall().pop()[0]
+                    self.logger.info('INGESTION RESULT: [SUCCESS]')
+                    self.logger.info('Num. of [%s] Records Ingested: [%i]', key, num_added)
+                    self.logger.info('Total Num. of [%s] Records Collected: [%i]', key, num_total)
+                    self.logger.info('-'*60)
+
                 cursor.execute('COMMIT;')
             except Exception as e:
                 cursor.execute('ROLLBACK;')
-                self.logger.error('Failed to database load')
-                self.logger.error('Error msg: %s', str(e))
+                self.logger.error('[%s] INGESTION RESULT: [FAILED]', key.upper())
+                self.logger.error('ERROR TYPE: [%s]', type(e))
+                self.logger.error('ERROR MSG:')
+                self.logger.error(e, exc_info=True)
             finally:
                 conn.close()

@@ -16,10 +16,12 @@ class OnthisdayAPIGetter(GetterInterface):
         bucket_key: str,
         access_key_id: str,
         access_key_pwd: str,
+        source_key: str=None,
         logger_fp: str=None
     ):
         super().__init__(
-            source_endpoint=source_endpoint, 
+            source_endpoint=source_endpoint,
+            source_key=source_key, 
             bucket_name=bucket_name,
             bucket_key=bucket_key,
             access_key_id=access_key_id,
@@ -27,7 +29,7 @@ class OnthisdayAPIGetter(GetterInterface):
             logger_fp=logger_fp
         )
 
-    def get(self):
+    def request(self):
         self.logger.info('Requesting..')
 
         try:

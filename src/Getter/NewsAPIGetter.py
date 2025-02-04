@@ -11,9 +11,9 @@ class NewsAPIGetter(GetterInterface):
     def __init__(
         self, 
         source_endpoint: str, 
+        source_key: str,
         bucket_name: str,
         bucket_key: str,
-        source_key: str,
         access_key_id: str,
         access_key_pwd: str,
         logger_fp: str=None
@@ -28,7 +28,7 @@ class NewsAPIGetter(GetterInterface):
             logger_fp=logger_fp
         )
 
-    def get(self):
+    def request(self):
         self.logger.info('Requesting..')
 
         try:
@@ -72,9 +72,8 @@ class NewsAPIGetter(GetterInterface):
         key=f'{self.bucket_key}/{date}'
         filename = f'stg_news_{time}.json'
 
-        client.put_object(
+        _ = client.put_object(
             Bucket=self.bucket_name,
             Key=f'{key}/{filename}',
             Body=bytes(json.dumps(self.data).encode('utf-8'))
         )
-        print('Good!')
