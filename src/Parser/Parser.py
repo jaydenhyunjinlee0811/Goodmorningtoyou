@@ -41,11 +41,11 @@ class Parser(object):
         }
 
     def parse(self):
-        self.extract()
-        self.transform()
-        self.ingest()
+        self._extract()
+        self._transform()
+        self._ingest()
 
-    def extract(self):
+    def _extract(self):
         self.logger.info('Extracting staged data from Minio buckets..')
         client = boto3.client(
             's3',
@@ -53,8 +53,7 @@ class Parser(object):
             aws_access_key_id=self.access_key_id,
             aws_secret_access_key=self.access_key_pwd
         )
-        # dt = datetime.datetime.now()
-        dt = datetime.datetime(2025,1,23)
+        dt = datetime.datetime.now()
         dt_key = datetime.datetime.strftime(dt, '%Y%m%d')
 
         for prefix in self.bucket_keys:
@@ -83,14 +82,14 @@ class Parser(object):
         
         self.logger.info('Extraction result from Bucket(%s/%s): [%s] files', self.bucket_name, f'{prefix}/{dt_key}', len(self.data))
 
-    def transform(self):
+    def _transform(self):
         url_patt = re.compile(r'https://www\.(\w+)\.com')
         for key in self.bucket_keys:
             contents = self.data[key]
             self.logger.info('Parsing [%s] staged data..', key)
 
             for content in contents:
-                url = content.pop('url', None)
+                url = content.get('url')
 
                 # Get rid of any leading/trailing whitespaces and single quotes
                 for key,val in content.items():
@@ -98,7 +97,6 @@ class Parser(object):
                 
                 ## News
                 # `content` is a news content
-                # `publisher` was not found from the API response
                 # `url` is not None
                 if (
                     ((publisher:=content.get('publisher', None)) is None) and
@@ -114,7 +112,7 @@ class Parser(object):
 
                 if (description:=content.get('description', None)) and (len(description) > 255):
                     content['description'] = description[:255]
-                
+
                 ## Onthisday
                 if (event:=content.get('event', None)) and (len(event) > 255):
                     content['event'] = event[:255]
@@ -124,7 +122,7 @@ class Parser(object):
 
             self.logger.info('Parsing [%s] complete!', key)
 
-    def ingest(self):
+    def _ingest(self):
         conn = pg.connect(
             host=self.db_host,
             port=self.db_port,
@@ -138,12 +136,13 @@ class Parser(object):
                 cursor.execute('BEGIN;')
                 for key, lst in self.data.items():
                     if key == 'news':
-                        insert = f'INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, publisheddate) VALUES '
-                        vals = ', '.join([str((d['publisher'], d['title'], d['description'], str(d['publishedDate']))) for d in lst])
+                        insert = f'INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, url, publisheddate) VALUES '
+                        vals = ', '.join([str((d['publisher'], d['title'], d['description'], d['url'], str(d['publishedDate']))) for d in lst])
                     else:
                         insert = f'INSERT INTO {self.tbl_schema}.{key} (year, event) VALUES '
                         vals = ', '.join([str((d['year'], d['event'])) for d in lst])
 
+                    print(insert + vals)
                     cursor.execute(insert + vals)
                     num_added = len(lst)
 
