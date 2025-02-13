@@ -1,0 +1,86 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+}
+
+.content-header {
+    height: 50%;
+    position: relative;
+    margin-left: 20px;
+    margin-bottom: 2px;
+    font-family: OCR A Std, monospace;
+    text-decoration: underline;
+}
+
+div#news-div {
+    margin-left: 20px;
+}
+
+#topic {
+    font-family: OCR A Std, monospace;
+    font-weight: bold;
+}
+
+li#news-description {
+    font-style: italic;
+}
+
+a:link {
+    color: blue;
+    text-transform: capitalize;
+}
+
+a:visited {
+    color: purple;
+}
+
+a:hover {
+    color: red; 
+} /* For all <a href> elements in template */
+
+h2#onthisday-header {
+    font-family: OCR A Std, monospace;
+    text-decoration: underline; 
+    position: relative;
+    margin-bottom: 2px;
+    height: 50%;
+}
+
+table#onthisday-table {
+    margin-left: 20px;
+}
+
+footer {
+    text-align:center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/*
+`id` belongs to single element in HTML template; refer to them using `#`
+`class` can belong to multiple elements in HTML template; refer to them using `.`
+*/
+
+/* 
+Ruleset for <div id="form-piece"> in <div class="custom-container">
+*/
+#form-piece {
+    background: rgb(55, 174, 174);
+    padding: 5px;
+}
+
+/* 
+Ruleset for <div id="center-piece"> under <div class="row"> under <div class="container">
+*/
+#center-piece h1 { /* h1 element under `center-piece` */
+    color: green;
+}
+
+#center-piece h3 {
+    color: purple;
+    text-transform: uppercase;
+}

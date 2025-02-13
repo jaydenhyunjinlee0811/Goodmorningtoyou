@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="static/css/main.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <title>NewsOnThisDay</title>
+        
+        {% if title %}
+            <title>{{ title }}</title>
+        {% else %}
+            <title>NewsOnThisDay</title>
+        {% endif %}
+
+    </head>
+
+    <body>
+        <header>
+            <h1 class="content-header">Good Morning! Here's What's Happened on {{ date }}:</h1>
+        </header>
+        <h2 class="content-header">{{ year }} News:</h2>
+        
+        {% for article in articles %}
+            <div class="w3-container" id="news-div">
+                <h3 id="news-header"> News #{{ article.label }}</h3>
+                <p id="topic">{{ article.title }}</p>
+                <ul style="list-style-type: '>>  ';">
+                    <li id="news-description"> {{ article.description }}</li>
+                    <li id="news-source"> <a href="{{ article.url }}">[Source]</a></li>
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div class="w3-container">
+            <h2 id="onthisday-header">What happened on this date??</h3>
+            <table id="onthisday-table">
+                <th>No.</th>
+                <th>Event</th>
+                <th>Year</th>
+                {% for event in onthisday %}
+                    <tr>
+                        <td>{{ event.label }}</td>
+                        <td>{{ event.event }}</td>
+                        <td>{{ event.year }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <footer>
+            {% if author %}
+                <p>&copy; 2025 Good Morning to You - {{ author }}</p>
+            {% else %}
+                <p>&copy; 2025 Good Morning to You</p>
+            {% endif %}
+        </footer>
+    </body>
+</html>
