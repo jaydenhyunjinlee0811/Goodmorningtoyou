@@ -17,36 +17,54 @@
 
     <body>
         <header>
-            <h1 class="content-header">Good Morning! Here's What's Happened on {{ date }}:</h1>
+            {% if author %}
+                <h1 class="intro">Good Morning {{ author }} &#9749;<br>Here's What's Happened on {{ date }}:</h1>
+            {% else %}
+                <h1 class="intro">Good Morning &#9749;<br>Here's What's Happened on {{ date }}:</h1>
+            {% endif %}
         </header>
-        <h2 class="content-header">{{ year }} News:</h2>
-        
-        {% for article in articles %}
-            <div class="w3-container" id="news-div">
-                <h3 id="news-header"> News #{{ article.label }}</h3>
-                <p id="topic">{{ article.title }}</p>
-                <ul style="list-style-type: '>>  ';">
-                    <li id="news-description"> {{ article.description }}</li>
-                    <li id="news-source"> <a href="{{ article.url }}">[Source]</a></li>
-                </ul>
+        <div class="centered-div"> 
+            <h2 class="content-header" style="text-align: center;"><u>Click Below!</u></h2>
+            <div style="width: 100%; display: flex;">
+                <div id="news-link-div">
+                    <h2>Left</h2>
+                </div>
+                <div id="onthisday-link-div" style="margin-left: 500px;">
+                    <h2>Right</h2>
+                </div>
             </div>
-        {% endfor %}
+        </div>
 
-        <div class="w3-container">
-            <h2 id="onthisday-header">What happened on this date??</h3>
+
+        
+        <!-- <div class="w3-container" id="news-div">
+            {% for article in articles %}
+                <div id="article-div">
+                    <h3 id="news-header"> News #{{ article.label }}</h3>
+                    <p id="topic">{{ article.title }}</p>
+                    <ul style="list-style-type: '>>  ';">
+                        <li id="news-description"> {{ article.description }}</li>
+                        <li id="news-source"> <a href="{{ article.url }}">[Source]</a></li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="w3-container" id="onthisday-div">
+            <h2 id="onthisday-header">What Happened On This Day??</h3>
             <table id="onthisday-table">
                 <th>No.</th>
-                <th>Event</th>
-                <th>Year</th>
+                <th>EVENT</th>
+                <th>YEAR</th>
                 {% for event in onthisday %}
                     <tr>
-                        <td>{{ event.label }}</td>
-                        <td>{{ event.event }}</td>
-                        <td>{{ event.year }}</td>
+                        <td align="center">{{ event.label }}.</td>
+                        <td id="table-event">{{ event.event }}</td>
+                        <td align="center">{{ event.year }}</td>
                     </tr>
                 {% endfor %}
             </table>
-        </div>
+        </div> -->
 
         <footer>
             {% if author %}
