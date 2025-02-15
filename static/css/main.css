@@ -2,27 +2,53 @@
     box-sizing: border-box;
 }
 
+/* Header */
+
 header {
     border: 2px solid #73AD21;
     border-radius: 25px;
+    position: relative;
 }
 
-h1.intro {
+.intro {
     font-family: OCR A Std, monospace;
     text-align: center;
+    position: relative;
 }
+
 
 .content-header {
     height: 50%;
     position: absolute;
-    margin-left: 20%;
     margin-bottom: 2%;
+    margin-left: 20%;
     font-family: OCR A Std, monospace;
     left: 0; 
     right: 0; 
     margin-inline: auto; 
     width: fit-content;
+    text-align: center;
+    z-index: 1;
 }
+
+h2.content-header:hover {
+    transform: scale(1.2);
+}
+
+.back-to-link {
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 20px;
+    float: left;
+    border: 2px solid black;
+    border-radius: 25px;
+    width: 300px;
+    position: relative;
+    height: 50%;
+    z-index: 2;
+}
+
+/* Body */
 
 .centered-div {
     position: absolute;
@@ -32,7 +58,7 @@ h1.intro {
 }
 
 div#news-link-div {
-    width: 300px;
+    width: 400px;
     float: left;
     border: 2px solid #73AD21;
     border-radius: 20px;
@@ -41,11 +67,15 @@ div#news-link-div {
 }
 
 div#onthisday-link-div {
-    width: 300px;
+    width: 400px;
     border: 2px solid #73AD21;
     border-radius: 20px;
     margin-top: 80px;
     padding: 5em;
+}
+
+.link-to {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 h2 {
@@ -61,6 +91,15 @@ div#news-div {
     margin-left: 20px;
 }
 
+div#onthisday-div {
+    position: relative;
+    padding-top: 5%;
+}
+
+div#article-div:hover {
+    transform: scale(1.01);
+}
+
 div#article-div:nth-child(odd) {
     background-color: lightcyan;
 }
@@ -70,8 +109,9 @@ div#article-div:nth-child(odd) {
     font-weight: bold;
 }
 
-li#news-description {
-    font-style: italic;
+li {
+    /* font-style: italic; */
+    font-family: Verdana, Geneva, Tahoma, sans-serif
 }
 
 a:link {
@@ -117,9 +157,9 @@ td#table-event {
     padding-left: 20px;
 }
 
-footer {
-    text-align:center;
+footer.footer {
     position: absolute;
+    text-align:center;
     bottom: 0;
     width: 100%;
 }

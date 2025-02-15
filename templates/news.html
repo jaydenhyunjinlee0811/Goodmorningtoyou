@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <title>News</title>
+    </head>
+
+    <body>
+        <header>
+            {% if author %}
+                <h1 class="intro" id="news-intro">News for {{ author }} &#128526;:</h1>
+            {% else %}
+                <h1 class="intro" id="news-intro">News for You &#128526;:</h1>
+            {% endif %}
+        </header>
+        <div class="back-to-link">
+            <a href="{{ url_for('home') }}">Back to Homepage</a>
+        </div>
+        
+        <div class="w3-container" id="news-div">
+            {% for article in articles %}
+                <div id="article-div">
+                    <h3 id="news-header"> News #{{ article.label }}</h3>
+                    <p id="topic">{{ article.title }}</p>
+                    <ul style="list-style-type: '>>  ';">
+                        <li id="news-description">
+                            {{ article.description }}
+                        </li>
+                        <li id="news-source"> 
+                            <a href="{{ article.url }}">[Link to Article]</a>
+                        </li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+        <footer class="footer">
+            {% if author %}
+                <p>&copy; 2025 News For {{ author }}</p>
+            {% else %}
+                <p>&copy; 2025 News For You</p>
+            {% endif %}
+        </footer>
+    </body>
+</html>
