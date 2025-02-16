@@ -1,6 +1,7 @@
 import logging 
 import sys
 import psycopg2 as pg
+from typing import List, Dict
 
 def get_logger(logger_fp: str=None):
     logger = logging.getLogger(__name__)
@@ -40,3 +41,11 @@ def create_pgclient(
         user=user,
         password=pwd
     )
+
+def sort_by_year(lst: List[Dict]):
+    valid_yrs = sorted(
+        [item for item in lst if isinstance(item.get('year', None), int)],
+        key=lambda x: x['year']
+    )
+    invalid_yrs = [item for item in lst if not isinstance(item.get('year', None), int)]
+    return valid_yrs + invalid_yrs

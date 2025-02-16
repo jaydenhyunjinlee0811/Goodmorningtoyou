@@ -25,13 +25,13 @@ class GetterInterface(ABC):
         self.data: List[Dict[str, str]] = list()
 
     def get(self):
-        self.request()
-        self.stage()
+        self._request()
+        self._stage()
 
     @abstractmethod
-    def request(self):
+    def _request(self):
         pass
 
     @abstractmethod
-    def stage(self):
+    def _stage(self):
         pass

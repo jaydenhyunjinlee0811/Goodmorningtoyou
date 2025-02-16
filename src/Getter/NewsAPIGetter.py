@@ -28,8 +28,9 @@ class NewsAPIGetter(GetterInterface):
             logger_fp=logger_fp
         )
 
-    def request(self):
+    def _request(self):
         self.logger.info('Requesting..')
+        dt = datetime.date.today()
 
         try:
             res = requests.get(f'{self.source_endpoint}&apiKey={self.source_key}').json()
@@ -43,17 +44,16 @@ class NewsAPIGetter(GetterInterface):
             sys.exit(1)
 
         for article in res['articles']:
-            dt = article['publishedAt'].split('T')[0]
             tmp = {
                 'publisher': article['source']['name'],
                 'title': article['title'],
                 'description': article['description'],
-                'publishedDate': dt,
+                'publishedDate': str(dt),
                 'url': article['url']
             }
             self.data.append(tmp)
 
-    def stage(self):
+    def _stage(self):
         client = boto3.client(
             's3',
             endpoint_url='http://localhost:9010',

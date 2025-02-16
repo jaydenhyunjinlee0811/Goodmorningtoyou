@@ -49,7 +49,6 @@ h2.content-header:hover {
 }
 
 /* Body */
-
 .centered-div {
     position: absolute;
     top: 40%;
@@ -158,10 +157,11 @@ td#table-event {
 }
 
 footer.footer {
-    position: absolute;
     text-align:center;
+    position: fixed;
     bottom: 0;
     width: 100%;
+    min-height: 50px;
 }
 
 /*

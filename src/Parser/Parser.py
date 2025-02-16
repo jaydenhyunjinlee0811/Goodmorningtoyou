@@ -6,7 +6,7 @@ import sys
 import psycopg2 as pg
 from typing import List, Dict
 
-from ..utils import get_logger 
+from ..utils import get_logger, create_pgclient
 
 class Parser(object):
     def __init__(
@@ -67,18 +67,22 @@ class Parser(object):
             if not contents:
                 self.logger.info('No data could be found from staging bucket, aborting..')
                 sys.exit(1)
-            
-            for content in contents:
-                key = content['Key']
-                response = client.get_object(
-                    Bucket=self.bucket_name,
-                    Key=key
-                )
-                data = response['Body'].read().decode('utf-8')
 
-                # JSON-ify the decoded content into List[Dict[str, dict]]
-                parsed_data = json.loads(data)
-                self.data[prefix]+=parsed_data
+            elif len(contents) > 1:
+                content = max(contents, key=lambda x:x['LastModified'])
+            else:
+                content = contents.pop(0)
+            
+            key = content['Key']
+            response = client.get_object(
+                Bucket=self.bucket_name,
+                Key=key
+            )
+            data = response['Body'].read().decode('utf-8')
+
+            # JSON-ify the decoded content into List[Dict[str, dict]]
+            parsed_data = json.loads(data)
+            self.data[prefix]+=parsed_data
         
         self.logger.info('Extraction result from Bucket(%s/%s): [%s] files', self.bucket_name, f'{prefix}/{dt_key}', len(self.data))
 
@@ -111,39 +115,71 @@ class Parser(object):
                     content['publishedDate'] = datetime.datetime.strptime(publishedDt, '%Y-%m-%d')
 
                 if (description:=content.get('description', None)) and (len(description) > 255):
-                    content['description'] = description[:255]
+                    shortened_description = description[:255].replace(description[-3:], '...')
+                    content['description'] = shortened_description
 
                 ## Onthisday
                 if (event:=content.get('event', None)) and (len(event) > 255):
                     content['event'] = event[:255]
                 
                 if (year_str:=content.get('year', None)):
-                    content['year'] = int(year_str)
+                    if isinstance(year_str, str):
+                        content['year'] = None
+                    else:
+                        content['year'] = int(year_str)
 
             self.logger.info('Parsing [%s] complete!', key)
 
     def _ingest(self):
-        conn = pg.connect(
+        conn = create_pgclient(
             host=self.db_host,
             port=self.db_port,
-            dbname=self.db_name,
+            db_name=self.db_name,
             user=self.db_user,
-            password=self.db_pwd
+            pwd=self.db_pwd,
         )
+        dt = str(datetime.date.today())
 
         with conn.cursor() as cursor:
             try:
                 cursor.execute('BEGIN;')
                 for key, lst in self.data.items():
-                    if key == 'news':
-                        insert = f'INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, url, publisheddate) VALUES '
-                        vals = ', '.join([str((d['publisher'], d['title'], d['description'], d['url'], str(d['publishedDate']))) for d in lst])
-                    else:
-                        insert = f'INSERT INTO {self.tbl_schema}.{key} (year, event) VALUES '
-                        vals = ', '.join([str((d['year'], d['event'])) for d in lst])
 
-                    print(insert + vals)
-                    cursor.execute(insert + vals)
+                    if key == 'news':
+                        select = f"SELECT COUNT(0) FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
+                        insert = f"INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, url, publisheddate) VALUES "
+                        tmp_vals = [
+                            (d['publisher'], d['title'], d['description'], d['url'], str(d['publishedDate'])) for d in lst
+                        ]
+                        vals = ', '.join(cursor.mogrify('(%s, %s, %s, %s, %s)', arg).decode('utf-8') for arg in tmp_vals)
+
+                        # Overwrite existing records
+                        _ = cursor.execute(select)
+                        res = cursor.fetchall()
+                        print(f'{res=}')
+                        if res:
+                            self.logger.info('Deleting stale news records..')
+                            _ = cursor.execute(f"DELETE FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';")
+                            self.logger.info('DELETION RESULT: [SUCCESS]')
+                    else:
+                        select = f"SELECT COUNT(0) FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
+                        insert = f"INSERT INTO {self.tbl_schema}.{key} (year, event, publisheddate) VALUES "
+                        tmp_vals = [
+                            (d['year'], d['event'] ,d['publishedDate']) for d in lst
+                        ]
+                        vals = ', '.join(cursor.mogrify('(%s, %s, %s)', arg).decode('utf-8') for arg in tmp_vals)
+
+                        # Overwrite existing records
+                        _ = cursor.execute(select)
+                        res = cursor.fetchall()
+                        print(f'{res=}')
+                        if res:
+                            self.logger.info('Deleting stale onthisday records..')
+                            _ = cursor.execute(f"DELETE FROM {self.tbl_schema}.{key} WHERE insertedAt::DATE = '{dt}';")
+                            self.logger.info('DELETION RESULT: [SUCCESS]')
+
+                    # print(json.dumps(vals, indent=4))
+                    cursor.execute(insert+vals)
                     num_added = len(lst)
 
                     cursor.execute(f'SELECT COUNT(0) FROM {self.tbl_schema}.{key};')

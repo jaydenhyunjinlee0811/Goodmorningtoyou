@@ -29,8 +29,9 @@ class OnthisdayAPIGetter(GetterInterface):
             logger_fp=logger_fp
         )
 
-    def request(self):
+    def _request(self):
         self.logger.info('Requesting..')
+        dt = str(datetime.date.today())
 
         try:
             res = requests.get(self.source_endpoint)
@@ -45,8 +46,6 @@ class OnthisdayAPIGetter(GetterInterface):
 
         soup = BeautifulSoup(res.text, 'html.parser')
         events = soup.find_all('li', class_='event')
-        today = datetime.datetime.now()
-        today_str = datetime.datetime.strftime(today, '%b%d')
         
         for event in events:
             if event.a:
@@ -54,22 +53,22 @@ class OnthisdayAPIGetter(GetterInterface):
                 try:
                     year = int(event_year)
                 except ValueError:
-                    year = 'Unknown'
+                    year = None
                 
                 _ = event.a.decompose()
 
             desc = event.text.strip()
-            if year == 'Unknown' and (substr:=desc.split(' ')[0]).isdigit():
-                year = int(substr)
+            if year is None and (substr:=desc.split(' ')[0]).isdigit():
+                year = substr
                 desc = desc.replace(substr, '').strip()
 
             self.data.append({
                 'year': year,
-                'date': today_str,
-                'event': desc
+                'event': desc,
+                'publishedDate': dt
             })
 
-    def stage(self):
+    def _stage(self):
         client = boto3.client(
             's3',
             endpoint_url='http://localhost:9010',
@@ -93,4 +92,3 @@ class OnthisdayAPIGetter(GetterInterface):
             Key=f'{key}/{filename}',
             Body=bytes(json.dumps(self.data).encode('utf-8'))
         )
-        print('Good!')
