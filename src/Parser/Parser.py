@@ -146,7 +146,7 @@ class Parser(object):
                 for key, lst in self.data.items():
 
                     if key == 'news':
-                        select = f"SELECT COUNT(0) FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
+                        select = f"SELECT news_id FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
                         insert = f"INSERT INTO {self.tbl_schema}.{key} (publisher, title, description, url, publisheddate) VALUES "
                         tmp_vals = [
                             (d['publisher'], d['title'], d['description'], d['url'], str(d['publishedDate'])) for d in lst
@@ -156,13 +156,12 @@ class Parser(object):
                         # Overwrite existing records
                         _ = cursor.execute(select)
                         res = cursor.fetchall()
-                        print(f'{res=}')
                         if res:
                             self.logger.info('Deleting stale news records..')
                             _ = cursor.execute(f"DELETE FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';")
                             self.logger.info('DELETION RESULT: [SUCCESS]')
                     else:
-                        select = f"SELECT COUNT(0) FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
+                        select = f"SELECT onthisday_id FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';"
                         insert = f"INSERT INTO {self.tbl_schema}.{key} (year, event, publisheddate) VALUES "
                         tmp_vals = [
                             (d['year'], d['event'] ,d['publishedDate']) for d in lst
@@ -172,10 +171,9 @@ class Parser(object):
                         # Overwrite existing records
                         _ = cursor.execute(select)
                         res = cursor.fetchall()
-                        print(f'{res=}')
                         if res:
                             self.logger.info('Deleting stale onthisday records..')
-                            _ = cursor.execute(f"DELETE FROM {self.tbl_schema}.{key} WHERE insertedAt::DATE = '{dt}';")
+                            _ = cursor.execute(f"DELETE FROM {self.tbl_schema}.{key} WHERE publisheddate = '{dt}';")
                             self.logger.info('DELETION RESULT: [SUCCESS]')
 
                     # print(json.dumps(vals, indent=4))

@@ -174,4 +174,3 @@ cython_debug/
 # Local development
 *dev*
 data/ 
-config/
