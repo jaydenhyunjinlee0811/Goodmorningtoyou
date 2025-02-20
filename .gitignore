@@ -13,6 +13,7 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+.DS_Store
 .eggs/
 lib/
 lib64/
@@ -169,3 +170,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Local development
+*dev*
+data/ 

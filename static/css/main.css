@@ -1,0 +1,190 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Header */
+
+header {
+    border: 2px solid #73AD21;
+    border-radius: 25px;
+    position: relative;
+}
+
+.intro {
+    font-family: OCR A Std, monospace;
+    text-align: center;
+    position: relative;
+}
+
+
+.content-header {
+    height: 50%;
+    position: absolute;
+    margin-bottom: 2%;
+    margin-left: 20%;
+    font-family: OCR A Std, monospace;
+    left: 0; 
+    right: 0; 
+    margin-inline: auto; 
+    width: fit-content;
+    text-align: center;
+    z-index: 1;
+}
+
+h2.content-header:hover {
+    transform: scale(1.2);
+}
+
+.back-to-link {
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 20px;
+    float: left;
+    border: 2px solid black;
+    border-radius: 25px;
+    width: 300px;
+    position: relative;
+    height: 50%;
+    z-index: 2;
+}
+
+/* Body */
+.centered-div {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+div#news-link-div {
+    width: 400px;
+    float: left;
+    border: 2px solid #73AD21;
+    border-radius: 20px;
+    margin-top: 80px;
+    padding: 5em;
+}
+
+div#onthisday-link-div {
+    width: 400px;
+    border: 2px solid #73AD21;
+    border-radius: 20px;
+    margin-top: 80px;
+    padding: 5em;
+}
+
+.link-to {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    font-family: OCR A Std, monospace;
+    text-decoration: underline;
+    position: relative;
+    margin-bottom: 2px;
+    height: 50%;
+}
+
+div#news-div {
+    margin-left: 20px;
+}
+
+div#onthisday-div {
+    position: relative;
+    padding-top: 5%;
+}
+
+div#article-div:hover {
+    transform: scale(1.01);
+}
+
+div#article-div:nth-child(odd) {
+    background-color: lightcyan;
+}
+
+#topic {
+    font-family: OCR A Std, monospace;
+    font-weight: bold;
+}
+
+li {
+    /* font-style: italic; */
+    font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
+a:link {
+    color: blue;
+    text-transform: capitalize;
+}
+
+a:visited {
+    color: purple;
+}
+
+a:hover {
+    color: red; 
+} /* For all <a href> elements in template */
+
+h2#onthisday-header {
+    font-family: OCR A Std, monospace;
+    text-decoration: underline; 
+    position: relative;
+    margin-bottom: 2px;
+    height: 50%;
+}
+
+table#onthisday-table {
+    margin-left: 20px;
+    padding: 5px;
+}
+
+th {
+    border-bottom: solid 1px;
+}
+
+tr:nth-child(even) {
+    background-color: #D6EEEE;
+}
+
+tr:hover {
+    background-color: #FFDE64;
+}
+
+td#table-event {
+    padding: 5px;
+    padding-left: 20px;
+}
+
+footer.footer {
+    text-align:center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    min-height: 50px;
+}
+
+/*
+`id` belongs to single element in HTML template; refer to them using `#`
+`class` can belong to multiple elements in HTML template; refer to them using `.`
+*/
+
+/* 
+Ruleset for <div id="form-piece"> in <div class="custom-container">
+*/
+#form-piece {
+    background: rgb(55, 174, 174);
+    padding: 5px;
+}
+
+/* 
+Ruleset for <div id="center-piece"> under <div class="row"> under <div class="container">
+*/
+#center-piece h1 { /* h1 element under `center-piece` */
+    color: green;
+}
+
+#center-piece h3 {
+    color: purple;
+    text-transform: uppercase;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <title>On This Day</title>
+    </head>
+    <body>
+        <header>
+            <h1 class="intro" id="news-intro">Things that happened on {{ date }} &#128558;:</h1>
+        </header>
+        <div class="back-to-link">
+            <a href="{{ url_for('home') }}">Back to Homepage</a>
+        </div>
+
+        <main>
+            <div class="w3-container" id="onthisday-div">
+                <table id="onthisday-table">
+                    <th>No.</th>
+                    <th>EVENT</th>
+                    <th>YEAR</th>
+                    {% for event in events %}
+                        <tr>
+                            <td align="center">{{ event.label }}.</td>
+                            <td id="table-event">{{ event.event }}</td>
+                            <td align="center">{{ event.year }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </main>
+    </body>
+</html>

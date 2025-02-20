@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="static/css/main.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        {% if title %}
+            <title>{{ title }}</title>
+        {% else %}
+            <title>NewsOnThisDay</title>
+        {% endif %}
+    </head>
+
+    <body>
+        <header>
+            {% if author %}
+                <h1 class="intro">Good Morning {{ author }} &#9749;<br>Here's What's Happened on {{ date }}:</h1>
+            {% else %}
+                <h1 class="intro">Good Morning &#9749;<br>Here's What's Happened on {{ date }}:</h1>
+            {% endif %}
+        </header>
+        <div class="centered-div"> 
+            <h2 class="content-header" style="text-align: center;"><u>Click Below!</u></h2>
+            <div style="width: 100%; display: flex;">
+                <div id="news-link-div">
+                    <h2><a class="link-to" href="{{ url_for('news', author=author) }}">{{ year }} NEWS</a></h2>
+                </div>
+                <div id="onthisday-link-div" style="margin-left: 500px;">
+                    <h2><a class="link-to" href="{{ url_for('onthisday', author=author) }}">ONTHISDAY</a></h2>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            {% if author %}
+                <p>&copy; 2025 Good Morning to You - {{ author }}</p>
+            {% else %}
+                <p>&copy; 2025 Good Morning to You</p>
+            {% endif %}
+        </footer>
+    </body>
+    
+</html>

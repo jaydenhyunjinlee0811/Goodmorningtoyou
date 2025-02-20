@@ -1,0 +1,2 @@
+from .NewsAPIGetter import NewsAPIGetter
+from .OnthisdayAPIGetter import OnthisdayAPIGetter
